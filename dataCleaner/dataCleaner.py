@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from typing import List, Dict
-from selectors.columns import Temperature, DayLength
+from customSelectors.columns import Temperature, DayLength
 
 
 class DataCleaner:
