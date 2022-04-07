@@ -1,15 +1,18 @@
 import pickle
 import gzip
+
+import numpy as np
 import pandas as pd
 from typing import Dict, Set
 
-from dataCleaner.dataCleaner import DataCleaner
-from customSelectors.columns import DeviceId, DeviceType
+from data.cleaner import DataCleaner
+from customSelectors.columns import DeviceId, DeviceType, Energy, Temperature, Wind, Clouds, Hum, DayLength, TypeOfDay, \
+    Season
 
 
 class DataReader:
     def __init__(self):
-        self.__data: Dict[str, pd.DataFrame] = None
+        self.__data: Dict[str, pd.DataFrame]
         self.__loadData()
         self.__clean()
         self.__devicesInfo: pd.DataFrame = None
@@ -21,12 +24,12 @@ class DataReader:
         self.__heating_ids: Set
 
     def __loadData(self):
-        pickle_file = 'data/data.pickle.gz'
+        pickle_file = 'data/data/data.pickle.gz'
         try:
             with gzip.open(pickle_file, 'rb') as f:
-                self.__data = pickle.load(f)
+                self.__data: Dict[str, pd.DataFrame] = pickle.load(f)
         except:
-            raise ValueError("Can't load __data")
+            raise ValueError("Can't load data")
 
     def getData(self):
         return self.__data
@@ -36,11 +39,11 @@ class DataReader:
         self.__data = dataCleaner.getCleanedData()
 
     def __loadDevicesInfo(self):
-        def_info_file = 'data/urzadzenia_rozliczeniowe.csv'
+        def_info_file = 'data/data/urzadzenia_rozliczeniowe.csv'
         try:
             self.__devicesInfo = pd.read_csv(def_info_file).set_index(DeviceId)
         except:
-            raise ValueError("Can't load __data")
+            raise ValueError("Can't load data")
 
     def getDevicesInfo(self):
         return self.__devicesInfo
@@ -57,9 +60,9 @@ class DataReader:
     def getHeatingDevices(self) -> Dict[str, pd.DataFrame]:
         return self.__heatingDevices
 
-    def getWaterDeviceById(self, index: str) -> pd.DataFrame:
+    def getWaterDeviceById(self, index: int) -> pd.DataFrame:
         if index in self.__water_ids:
-            return self.__waterDevices.get(index)
+            return self.__waterDevices.get(str(index))
         else:
             raise ValueError("Given id doesnt exist")
 
@@ -68,4 +71,3 @@ class DataReader:
             return self.__heatingDevices.get(str(index))
         else:
             raise ValueError("Given id doesnt exist")
-
