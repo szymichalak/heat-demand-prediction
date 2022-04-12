@@ -9,11 +9,11 @@ from data.splitter import DataSplitter
 
 
 class AbstractPrediction:
-    def __init__(self, data: pd.DataFrame, order: Tuple = (0, 0, 0), seasonalOrder: Tuple = (0, 0, 0, 0)):
+    def __init__(self, data: pd.DataFrame, aggregateByDay: bool, order: Tuple = (0, 0, 0), seasonalOrder: Tuple = (0, 0, 0, 0)):
         self.__data = data
         self.__order = order
         self.__seasonalOrder = seasonalOrder
-        (self.__trainingData, self.__testingData) = DataSplitter(data).getSplittedData()
+        (self.__trainingData, self.__testingData) = DataSplitter(data).getSplittedData(aggregateByDay=aggregateByDay)
 
     def getTrainingData(self) -> pd.DataFrame:
         return self.__trainingData
@@ -28,9 +28,10 @@ class AbstractPrediction:
             order=self.__order,
             seasonal_order=self.__seasonalOrder
         )
-        print('Fitting is starting')
+        print('Fitting is starting...')
+        print(f"Current time {time.strftime('%d %b %Y %H:%M:%S')}")
         start = time.time()
-        modelFitted = model.fit()
+        modelFitted = model.fit(low_memory=True)
         end = time.time()
         print(f"Model fitted within {int(end - start)} seconds")
         return modelFitted

@@ -6,7 +6,7 @@ from prediction.abstractPrediction import AbstractPrediction
 
 class ArimaPrediction(AbstractPrediction):
     def __init__(self, data: pd.DataFrame, order: Tuple):
-        super().__init__(data, order=order)
+        super().__init__(data, False, order=order)
         self.__order = order
         self.__checkOrderValidity()
 

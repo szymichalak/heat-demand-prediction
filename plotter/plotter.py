@@ -22,6 +22,7 @@ class Plotter:
         if self.__testingData is None:
             raise ValueError('No testing data provided! Can not create compare plot')
         plt.figure(figsize=(12, 4), dpi=100)
-        plt.plot(self.__testingData[Timestamp], self.__testingData[Energy])
-        plt.plot(self.__testingData[Timestamp], prediction)
+        plt.plot(self.__testingData[Timestamp], self.__testingData[Energy], label="Testing")
+        plt.plot(self.__testingData[Timestamp], prediction, label="Prediction")
+        plt.legend(loc="upper left")
         plt.show()

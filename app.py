@@ -13,19 +13,19 @@ pd.options.mode.chained_assignment = None
 def main():
     dataReader = DataReader()
     heatingData = dataReader.getHeatingDeviceById(5066)
-    (trainingData, testingData) = DataSplitter(heatingData).getSplittedData()
+    (trainingData, testingData) = DataSplitter(heatingData).getSplittedData(aggregateByDay=False)
 
-    # arima = ArimaPrediction(heatingData, (1, 1, 1))
-    # arimaPrediction = arima.calculateForecast()
-    #
+    arima = ArimaPrediction(heatingData, (10, 1, 10))
+    arimaPrediction = arima.calculateForecast()
+
     # arma = ArmaPrediction(heatingData, (1, 0, 1))
     # armaPrediction = arma.calculateForecast()
 
-    sarima = SarimaPrediction(heatingData, (1, 1, 1, 8760))
-    sarimaPrediction = sarima.calculateForecast()
+    # sarima = SarimaPrediction(heatingData, (1, 1, 1, 365))
+    # sarimaPrediction = sarima.calculateForecast()
 
     plotter = Plotter(heatingData, testingData)
-    plotter.compare(sarimaPrediction)
+    plotter.compare(arimaPrediction)
 
 
 if __name__ == '__main__':

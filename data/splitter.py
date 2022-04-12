@@ -1,12 +1,13 @@
 import pandas as pd
 
 from typing import Tuple
-from customSelectors.columns import Timestamp
+from customSelectors.columns import Timestamp, Energy, Temperature, Hum, Wind, TypeOfDay, Clouds, DayLength, Season
 
 
 class DataSplitter:
-    def __init__(self, data: pd.DataFrame):
+    def __init__(self, data: pd.DataFrame, aggregateByDay: bool = False):
         self.__data = data
+        self.__aggregateByDay = aggregateByDay
         
         self.__startTraining = '2016-01-01 00:00:00'
         self.__endTraining = '2017-03-31 23:00:00'
@@ -16,14 +17,14 @@ class DataSplitter:
         self.__trainingData = self.__sliceTimeSeries(self.__startTraining, self.__endTraining)
         self.__testingData = self.__sliceTimeSeries(self.__startTesting, self.__endTesting)
 
-    def getTrainingData(self) -> pd.DataFrame:
-        return self.__trainingData
+    def getTrainingData(self, aggregateByDay: int = False) -> pd.DataFrame:
+        return self.__trainingData if not aggregateByDay else self.__getAggregateDataByDay(self.__trainingData)
 
-    def getTestingData(self) -> pd.DataFrame:
-        return self.__testingData
+    def getTestingData(self, aggregateByDay: int = False) -> pd.DataFrame:
+        return self.__testingData if not aggregateByDay else self.__getAggregateDataByDay(self.__testingData)
 
-    def getSplittedData(self) -> Tuple:
-        return self.__trainingData, self.__testingData
+    def getSplittedData(self, aggregateByDay: int = False) -> Tuple:
+        return self.getTrainingData(aggregateByDay), self.getTestingData(aggregateByDay)
 
     def __sliceTimeSeries(self, startTime: str, endTime: str) -> pd.DataFrame:
         startIndex = self.__data.loc[self.__data[Timestamp] == startTime].index[0]
@@ -32,3 +33,21 @@ class DataSplitter:
         assert (0 <= endIndex <= len(self.__data.index))
         assert (startIndex < endIndex)
         return self.__data[startIndex:(endIndex + 1)]
+
+    def __getAggregateDataByDay(self, data: pd.DataFrame) -> pd.DataFrame:
+        data[Timestamp] = data[Timestamp].apply(lambda x: x.date())
+        dates = list(data.groupby(Timestamp).groups.keys())
+        data = data.groupby(Timestamp).agg(
+            {
+                Energy: 'sum',
+                Temperature: 'mean',
+                Wind: 'mean',
+                Hum: 'mean',
+                Clouds: 'mean',
+                DayLength: 'mean',
+                TypeOfDay: 'mean',
+                Season: 'mean'
+            }
+        )
+        data = data.assign(Date=dates)
+        return data.rename(columns={'Date': Timestamp})
