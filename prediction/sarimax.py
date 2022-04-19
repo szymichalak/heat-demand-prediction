@@ -1,12 +1,12 @@
-import pandas as pd
 from typing import Tuple
 
+from data.split import DataSplit
 from prediction.abstractPrediction import AbstractPrediction
 
 
 class SarimaxPrediction(AbstractPrediction):
-    def __init__(self, data: pd.DataFrame, order: Tuple, seasonalOrder: Tuple):
-        super().__init__(data, True, order=order, seasonalOrder=seasonalOrder)
+    def __init__(self, data: DataSplit, order: Tuple, seasonalOrder: Tuple):
+        super().__init__(data, order=order, seasonalOrder=seasonalOrder)
         self.__order = order
         self.__seasonalOrder = seasonalOrder
         self.__checkOrderValidity()

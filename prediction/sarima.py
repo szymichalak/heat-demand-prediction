@@ -1,12 +1,12 @@
-import pandas as pd
 from typing import Tuple
 
+from data.split import DataSplit
 from prediction.abstractPrediction import AbstractPrediction
 
 
 class SarimaPrediction(AbstractPrediction):
-    def __init__(self, data: pd.DataFrame, seasonalOrder: Tuple):
-        super().__init__(data, True, seasonalOrder=seasonalOrder)
+    def __init__(self, data: DataSplit, seasonalOrder: Tuple):
+        super().__init__(data, seasonalOrder=seasonalOrder)
         self.__seasonalOrder = seasonalOrder
         self.__checkOrderValidity()
 

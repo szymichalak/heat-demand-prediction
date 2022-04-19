@@ -1,12 +1,12 @@
-import pandas as pd
 from typing import Tuple
 
+from data.split import DataSplit
 from prediction.abstractPrediction import AbstractPrediction
 
 
 class ArmaPrediction(AbstractPrediction):
-    def __init__(self, data: pd.DataFrame, order: Tuple):
-        super().__init__(data, False, order=order)
+    def __init__(self, data: DataSplit, order: Tuple):
+        super().__init__(data, order=order)
         self.__order = order
         self.__checkOrderValidity()
 

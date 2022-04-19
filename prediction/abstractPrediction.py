@@ -5,15 +5,15 @@ from typing import Tuple
 from statsmodels.tsa.arima.model import ARIMA, ARIMAResults
 
 from customSelectors.columns import Energy, exog
-from data.splitter import DataSplitter
+from data.split import DataSplit
 
 
 class AbstractPrediction:
-    def __init__(self, data: pd.DataFrame, aggregateByDay: bool, order: Tuple = (0, 0, 0), seasonalOrder: Tuple = (0, 0, 0, 0)):
+    def __init__(self, data: DataSplit, order: Tuple = (0, 0, 0), seasonalOrder: Tuple = (0, 0, 0, 0)):
         self.__data = data
         self.__order = order
         self.__seasonalOrder = seasonalOrder
-        (self.__trainingData, self.__testingData) = DataSplitter(data).getSplittedData(aggregateByDay=aggregateByDay)
+        (self.__trainingData, self.__testingData) = (data.training, data.testing)
 
     def getTrainingData(self) -> pd.DataFrame:
         return self.__trainingData

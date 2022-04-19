@@ -1,7 +1,7 @@
 import pandas as pd
 
-from typing import Tuple
 from customSelectors.columns import Timestamp, Energy, Temperature, Hum, Wind, TypeOfDay, Clouds, DayLength, Season
+from data.split import DataSplit
 
 
 class DataSplitter:
@@ -10,9 +10,9 @@ class DataSplitter:
         self.__aggregateByDay = aggregateByDay
         
         self.__startTraining = '2016-01-01 00:00:00'
-        self.__endTraining = '2017-03-31 23:00:00'
-        self.__startTesting = '2017-04-01 00:00:00'
-        self.__endTesting = '2017-04-30 23:00:00'
+        self.__endTraining = '2017-11-30 23:00:00'
+        self.__startTesting = '2017-12-01 00:00:00'
+        self.__endTesting = '2017-12-31 23:00:00'
         
         self.__trainingData = self.__sliceTimeSeries(self.__startTraining, self.__endTraining)
         self.__testingData = self.__sliceTimeSeries(self.__startTesting, self.__endTesting)
@@ -23,8 +23,8 @@ class DataSplitter:
     def getTestingData(self, aggregateByDay: int = False) -> pd.DataFrame:
         return self.__testingData if not aggregateByDay else self.__getAggregateDataByDay(self.__testingData)
 
-    def getSplittedData(self, aggregateByDay: int = False) -> Tuple:
-        return self.getTrainingData(aggregateByDay), self.getTestingData(aggregateByDay)
+    def getSplittedData(self, aggregateByDay: int = False) -> DataSplit:
+        return DataSplit((self.getTrainingData(aggregateByDay), self.getTestingData(aggregateByDay)))
 
     def __sliceTimeSeries(self, startTime: str, endTime: str) -> pd.DataFrame:
         startIndex = self.__data.loc[self.__data[Timestamp] == startTime].index[0]
