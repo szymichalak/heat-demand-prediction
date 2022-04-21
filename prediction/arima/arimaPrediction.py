@@ -8,12 +8,13 @@ from customSelectors.columns import Energy, exog
 from data.split import DataSplit
 
 
-class AbstractPrediction:
+class ArimaPrediction:
     def __init__(self, data: DataSplit, order: Tuple = (0, 0, 0), seasonalOrder: Tuple = (0, 0, 0, 0)):
         self.__data = data
         self.__order = order
         self.__seasonalOrder = seasonalOrder
         (self.__trainingData, self.__testingData) = (data.training, data.testing)
+        self.__fittingTime: float = 0
 
     def getTrainingData(self) -> pd.DataFrame:
         return self.__trainingData
@@ -28,17 +29,15 @@ class AbstractPrediction:
             order=self.__order,
             seasonal_order=self.__seasonalOrder
         )
-        print('Fitting is starting...')
-        print(f"Current time {time.strftime('%d %b %Y %H:%M:%S')}")
         start = time.time()
         modelFitted = model.fit(low_memory=True)
         end = time.time()
-        print(f"Model fitted within {int(end - start)} seconds")
+        self.__fittingTime = round(end - start, 2)
         return modelFitted
 
     def __getForecast(self, model: ARIMAResults) -> pd.DataFrame:
         testLen = len(self.__testingData.index)
         return model.forecast(testLen, exog=self.__testingData[exog])
 
-    def calculateForecast(self) -> pd.DataFrame:
-        return self.__getForecast(self.__fitModel())
+    def calculateForecast(self) -> Tuple[pd.DataFrame, float]:
+        return self.__getForecast(self.__fitModel()), self.__fittingTime

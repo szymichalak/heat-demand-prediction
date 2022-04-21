@@ -1,12 +1,14 @@
 import pandas as pd
 from matplotlib import pyplot as plt
+from typing import List, Tuple
+
 from customSelectors.columns import Timestamp, Temperature, Energy, Wind
+from prediction.arima.tuneResult import TuneResult
 
 
 class Plotter:
-    def __init__(self, data: pd.DataFrame, testingData: pd.DataFrame = None):
+    def __init__(self, data: pd.DataFrame):
         self.__data = data
-        self.__testingData = testingData
 
     def generateTemperaturePlot(self):
         plt.figure(figsize=(12, 4), dpi=100)
@@ -29,13 +31,22 @@ class Plotter:
         plt.ylabel("Energy [kWh]")
         plt.show()
 
-    def compare(self, prediction: pd.DataFrame):
-        if self.__testingData is None:
-            raise ValueError('No testing data provided! Can not create compare plot')
+    def compare(self, actualData: pd.DataFrame, forecast: pd.DataFrame):
         plt.figure(figsize=(12, 4), dpi=100)
-        plt.plot(self.__testingData[Timestamp], self.__testingData[Energy], label="Testing")
-        plt.plot(self.__testingData[Timestamp], prediction, label="Prediction")
+        plt.plot(actualData[Timestamp], actualData[Energy], label="Actual")
+        plt.plot(actualData[Timestamp], forecast, label="Forecast")
         plt.legend(loc="upper left")
         plt.xlabel("Time")
         plt.ylabel("Energy [kWh]")
+        plt.show()
+
+    def tuneCompare(self, data: List[TuneResult], errorLabel: str = 'MAPE'):
+        plt.figure(figsize=(6, 6), dpi=100)
+        plt.scatter([res.time for res in data], [res.error for res in data])
+        plt.xlabel("Time")
+        plt.ylabel(errorLabel)
+
+        for res in data:
+            plt.annotate(res.order, (res.time, res.error), fontsize=6.5)
+
         plt.show()
