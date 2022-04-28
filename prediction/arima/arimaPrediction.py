@@ -30,7 +30,7 @@ class ArimaPrediction:
             seasonal_order=self.__seasonalOrder
         )
         start = time.time()
-        modelFitted = model.fit(low_memory=True)
+        modelFitted = model.fit()
         end = time.time()
         self.__fittingTime = round(end - start, 2)
         return modelFitted

@@ -15,3 +15,8 @@ class TuneResult:
 
     def toString(self):
         return f"{self.error}; {self.time}s; {self.order}"
+
+
+def stringRowToTuneResult(row: str) -> TuneResult:
+    rowArray = row.replace('\n', '').replace(' ', '').replace('(', '').replace(')', '').replace('s', '').split(';')
+    return TuneResult(float(rowArray[0]), float(rowArray[1]), tuple([int(o) for o in rowArray[2].split(',')]))

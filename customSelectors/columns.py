@@ -9,7 +9,8 @@ DayLength = 'Dlug. dnia'
 TypeOfDay = 'Typ dnia'
 Season = 'Pora roku'
 
-exog = [Temperature, Wind, Hum, Clouds, DayLength, TypeOfDay, Season]
+# exog = [Temperature, Wind, Hum, Clouds, DayLength, TypeOfDay, Season]
+exog = [Temperature, DayLength, TypeOfDay, Season]
 
 # urzadzenia_rozliczeniowe
 DeviceId = 'Id. urządzenia'

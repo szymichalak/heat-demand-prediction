@@ -1,13 +1,11 @@
 import pickle
 import gzip
-
-import numpy as np
 import pandas as pd
+
 from typing import Dict, Set
 
 from data.cleaner import DataCleaner
-from customSelectors.columns import DeviceId, DeviceType, Energy, Temperature, Wind, Clouds, Hum, DayLength, TypeOfDay, \
-    Season
+from customSelectors.columns import DeviceId, DeviceType
 
 
 class DataReader:
@@ -51,6 +49,10 @@ class DataReader:
     def __splitDataByType(self):
         self.__water_ids = set(self.__devicesInfo[self.__devicesInfo[DeviceType] == 'Licznik CW(O)'].index)
         self.__heating_ids = set(self.__devicesInfo[self.__devicesInfo[DeviceType] == 'Licznik CO(O)'].index)
+        all_ids = set([int(x) for x in self.__data.keys()])
+        self.__water_ids = all_ids.intersection(self.__water_ids)
+        self.__heating_ids = all_ids.intersection(self.__heating_ids)
+
         self.__waterDevices = {k: v for k, v in self.__data.items() if int(k) in self.__water_ids}
         self.__heatingDevices = {k: v for k, v in self.__data.items() if int(k) in self.__heating_ids}
 
@@ -71,3 +73,9 @@ class DataReader:
             return self.__heatingDevices.get(str(index))
         else:
             raise ValueError("Given id doesnt exist")
+
+    def getWaterIds(self) -> set:
+        return self.__water_ids
+
+    def getHeatingIds(self) -> set:
+        return self.__heating_ids
