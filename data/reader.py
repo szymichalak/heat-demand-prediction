@@ -1,5 +1,6 @@
 import pickle
 import gzip
+import random
 import pandas as pd
 
 from typing import Dict, Set
@@ -73,6 +74,12 @@ class DataReader:
             return self.__heatingDevices.get(str(index))
         else:
             raise ValueError("Given id doesnt exist")
+
+    def getRandomWaterDevice(self) -> pd.DataFrame:
+        return self.__waterDevices.get(str(random.sample(self.__water_ids, 1)[0]))
+
+    def getRandomHeatingDevice(self) -> pd.DataFrame:
+        return self.__heatingDevices.get(str(random.sample(self.__heating_ids, 1)[0]))
 
     def getWaterIds(self) -> set:
         return self.__water_ids

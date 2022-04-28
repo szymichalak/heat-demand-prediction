@@ -2,6 +2,7 @@ import pandas as pd
 import warnings
 
 from sklearn.metrics import mean_absolute_percentage_error as mape
+from sklearn.metrics import mean_squared_error as mse
 
 from customSelectors.columns import Energy
 from data.reader import DataReader
@@ -27,23 +28,31 @@ def main():
     #     title = f"Heating energy measures, deviceId: {deviceId}"
     #     plotter = Plotter(heatingData, title)
     #
-    #     arima = ArimaPrediction(data, (1, 1, 1), (1, 1, 1, 24))
+    #     arima = ArimaPrediction(data, (1, 0, 0))
     #     prediction, time = arima.calculateForecast()
     #     plotter.compare(data.testing, prediction)
     #     mapeRes = mape(data.testing[Energy], prediction)
-    #     print(mapeRes, deviceId)
+    #     mseRes = mse(data.testing[Energy], prediction)
+    #     print(mapeRes, mseRes, deviceId)
 
     # heatingData = dataReader.getHeatingDeviceById(5058)
     # data: DataSplit = DataSplitter(heatingData).getSplittedData()
     # plotter = Plotter(data.training)
-    # plotter.generateEnergyConsumptionPlot()
 
-    heatingData = dataReader.getHeatingDeviceById(5058)
-    data: DataSplit = DataSplitter(heatingData).getSplittedData()
-    tuner = Tuner(data)
-    tuneRes = tuner.tuneOrder([0, 1, 5], [0, 1], [0, 1, 5])
-    plotter = Plotter(heatingData)
-    plotter.tuneCompare(tuneRes)
+    # arima = ArimaPrediction(data, (15, 1, 15))
+    # prediction, time = arima.calculateForecast()
+    # plotter.compare(data.testing, prediction)
+    # mapeRes = mape(data.testing[Energy], prediction)
+    # mseRes = mse(data.testing[Energy], prediction)
+    # print(mapeRes, mseRes)
+
+    for i in range(5):
+        heatingData = dataReader.getHeatingDeviceById(5006)
+        data: DataSplit = DataSplitter(heatingData).getSplittedData()
+        tuner = Tuner(data)
+        tuneRes = tuner.tuneOrder([0, 1], [0, 1], [0, 1])
+        plotter = Plotter(heatingData)
+        plotter.tuneCompare(tuneRes)
 
 
 if __name__ == '__main__':

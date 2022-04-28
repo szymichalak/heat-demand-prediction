@@ -7,15 +7,10 @@ from data.split import DataSplit
 class DataSplitter:
     def __init__(self, data: pd.DataFrame):
         self.__data = data
-        
-        # self.__startTraining = '2016-01-01 00:00:00'
-        # self.__endTraining = '2017-11-30 23:00:00'
-        # self.__startTesting = '2017-12-01 00:00:00'
-        # self.__endTesting = '2017-12-31 23:00:00'
 
         self.__startTraining = '2016-01-01 00:00:00'
         self.__endTraining = '2017-12-31 23:00:00'
-        self.__startTesting = '2018-11-01 00:00:00'
+        self.__startTesting = '2018-10-01 00:00:00'
         self.__endTesting = '2019-02-25 23:00:00'
         
         self.__trainingData = self.__sliceTimeSeries(self.__startTraining, self.__endTraining)

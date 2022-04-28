@@ -46,9 +46,11 @@ class Plotter:
         plt.show()
 
     def tuneCompare(self, data: List[TuneResult], errorLabel: str = 'MAPE'):
+        # data = [row for row in data if row.time < 60]
+
         plt.figure(figsize=(8, 8), dpi=300)
         plt.scatter([res.time for res in data], [res.error for res in data])
-        plt.xlabel("Time")
+        plt.xlabel("Time [s]")
         plt.ylabel(errorLabel)
 
         for res in data:
@@ -60,15 +62,4 @@ class Plotter:
     def tuneCompareFromFile(self, fileName: str, errorLabel: str = 'MAPE'):
         with open(f"prediction/arima/tuneResults/{fileName}", 'r') as file:
             data = [stringRowToTuneResult(row) for row in file.readlines()]
-
-        # data = [row for row in data if row.time < 60]
-        plt.figure(figsize=(8, 8), dpi=300)
-        plt.scatter([res.time for res in data], [res.error for res in data])
-        plt.xlabel("Time [s]")
-        plt.ylabel(errorLabel)
-
-        for res in data:
-            plt.annotate(res.order, (res.time, res.error), fontsize=6.5)
-
-        plt.title(self.__title)
-        plt.show()
+        self.tuneCompare(data, errorLabel)

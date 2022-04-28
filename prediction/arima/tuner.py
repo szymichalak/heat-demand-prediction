@@ -24,12 +24,14 @@ class Tuner:
         for p in p_orders:
             for d in d_orders:
                 for q in q_orders:
+                    if p + d + q == 0:
+                        continue
                     order = (p, d, q)
                     arima = ArimaPrediction(self.__data, order)
                     prediction, fittingTime = arima.calculateForecast()
                     mapeResult = mape(self.__data.testing[Energy], prediction)
                     result.append(TuneResult(round(mapeResult, 4), fittingTime, order))
-                    print(f"Tuned {round(len(result) / (len(p_orders) * len(d_orders) * len(q_orders)), 2) * 100} %")
+                    print(f"Tuned {int(len(result) / (len(p_orders) * len(d_orders) * len(q_orders)) * 100)} %")
 
         if saveResult:
             self.__writeToFile(result)
