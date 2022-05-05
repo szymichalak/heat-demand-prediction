@@ -35,24 +35,24 @@ def main():
     #     mseRes = mse(data.testing[Energy], prediction)
     #     print(mapeRes, mseRes, deviceId)
 
-    # heatingData = dataReader.getHeatingDeviceById(5058)
+    # heatingData = dataReader.getWaterDeviceById(5005)
     # data: DataSplit = DataSplitter(heatingData).getSplittedData()
     # plotter = Plotter(data.training)
-
-    # arima = ArimaPrediction(data, (15, 1, 15))
+    #
+    # arima = ArimaPrediction(data, (0,0,1))
     # prediction, time = arima.calculateForecast()
-    # plotter.compare(data.testing, prediction)
+    # plotter.compare(data.testing, prediction, 720, 0)
+    # plotter.compare(data.testing, prediction)  # , 720, 0)
     # mapeRes = mape(data.testing[Energy], prediction)
     # mseRes = mse(data.testing[Energy], prediction)
     # print(mapeRes, mseRes)
 
-    for i in range(5):
-        heatingData = dataReader.getHeatingDeviceById(5006)
-        data: DataSplit = DataSplitter(heatingData).getSplittedData()
-        tuner = Tuner(data)
-        tuneRes = tuner.tuneOrder([0, 1], [0, 1], [0, 1])
-        plotter = Plotter(heatingData)
-        plotter.tuneCompare(tuneRes)
+    heatingData = dataReader.getHeatingDeviceById(5006)
+    data: DataSplit = DataSplitter(heatingData).getSplittedData()
+    tuner = Tuner(data)
+    tuneRes = tuner.tuneSeasonalOrder([1], [1], [1])
+    plotter = Plotter(heatingData)
+    plotter.tuneCompare(tuneRes)
 
 
 if __name__ == '__main__':

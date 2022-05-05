@@ -35,7 +35,10 @@ class Plotter:
         plt.title(self.__title)
         plt.show()
 
-    def compare(self, actualData: pd.DataFrame, forecast: pd.DataFrame):
+    def compare(self, actualData: pd.DataFrame, forecast: pd.DataFrame, records: int = None, offset: int = 0):
+        if records is not None:
+            actualData = actualData[offset:offset+records+1]
+            forecast = forecast[offset:offset+records+1]
         plt.figure(figsize=(12, 4), dpi=300)
         plt.plot(actualData[Timestamp], actualData[Energy], label="Actual")
         plt.plot(actualData[Timestamp], forecast, label="Forecast")
@@ -46,6 +49,7 @@ class Plotter:
         plt.show()
 
     def tuneCompare(self, data: List[TuneResult], errorLabel: str = 'MAPE'):
+        # data = [row for row in data if row.error < 10]
         # data = [row for row in data if row.time < 60]
 
         plt.figure(figsize=(8, 8), dpi=300)
