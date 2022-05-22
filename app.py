@@ -24,18 +24,13 @@ def main():
     data: DataSplit = DataSplitter(deviceData).getSplittedData()
     plotter = Plotter(deviceData)
 
-    rf = RandomForestPrediction(data, 10, None, 2, 5)
-    prediction, time = rf.calculateForecast()
-    plotter.compare(data.testing, prediction)
-    plotter.compare(data.testing, prediction, 720)
+    arima = ArimaPrediction(data, seasonalOrder=(0, 0, 1, 365*24))
+    prediction, time = arima.calculateForecast()
+    # plotter.compare(data.testing, prediction)
+    # plotter.compare(data.testing, prediction, 720)
     mapeRes = mape(data.testing[Energy], prediction)
     mseRes = mse(data.testing[Energy], prediction)
     print(mapeRes, mseRes)
-
-    # tuner = Tuner(data)
-    # tuneRes = tuner.tuneParameters([10, 50, 100, 200], [None, 1, 2], [2, 5], [1, 2, 5])
-    # plotter.tuneCompare(tuneRes)
-    # plotter.tuneCompare(tuneRes, sliceResult=True)
 
 
 if __name__ == '__main__':
