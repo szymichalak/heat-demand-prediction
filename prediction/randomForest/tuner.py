@@ -41,5 +41,5 @@ class Tuner:
 
     def __writeToFile(self, data: List[TuneResult]):
         fileName = time.strftime('%d_%b_%Y_%H_%M_%S')
-        with open(f"prediction/arima/tuneResults/{fileName}", 'w') as file:
+        with open(f"prediction/randomForest/tuneResults/{fileName}", 'w') as file:
             file.writelines([res.toString() + '\n' for res in data])

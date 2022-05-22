@@ -19,12 +19,12 @@ warnings.filterwarnings('ignore')
 
 def main():
     dataReader = DataReader()
-    # deviceData = dataReader.getWaterDeviceById(5005)
-    deviceData = dataReader.getHeatingDeviceById(5006)
+    deviceData = dataReader.getWaterDeviceById(5005)
+    # deviceData = dataReader.getHeatingDeviceById(5006)
     data: DataSplit = DataSplitter(deviceData).getSplittedData()
     plotter = Plotter(deviceData)
 
-    rf = RandomForestPrediction(data)  # , 50, None, 5, 5)
+    rf = RandomForestPrediction(data, 10, None, 2, 5)
     prediction, time = rf.calculateForecast()
     plotter.compare(data.testing, prediction)
     plotter.compare(data.testing, prediction, 720)
@@ -35,6 +35,7 @@ def main():
     # tuner = Tuner(data)
     # tuneRes = tuner.tuneParameters([10, 50, 100, 200], [None, 1, 2], [2, 5], [1, 2, 5])
     # plotter.tuneCompare(tuneRes)
+    # plotter.tuneCompare(tuneRes, sliceResult=True)
 
 
 if __name__ == '__main__':

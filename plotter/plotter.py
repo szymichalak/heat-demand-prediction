@@ -48,9 +48,10 @@ class Plotter:
         plt.title(self.__title)
         plt.show()
 
-    def tuneCompare(self, data: List[TuneResult], errorLabel: str = 'MAPE'):
-        # data = [row for row in data if row.error < 10]
-        # data = [row for row in data if row.time < 60]
+    def tuneCompare(self, data: List[TuneResult], errorLabel: str = 'MAPE', sliceResult: bool = False):
+        if sliceResult:
+            data = [row for row in data if row.error < 0.25]
+            data = [row for row in data if row.time < 0.75]
 
         plt.figure(figsize=(8, 8), dpi=300)
         plt.scatter([res.time for res in data], [res.error for res in data])
@@ -63,7 +64,7 @@ class Plotter:
         plt.title(self.__title)
         plt.show()
 
-    def tuneCompareFromFile(self, fileName: str, errorLabel: str = 'MAPE'):
-        with open(f"prediction/arima/tuneResults/{fileName}", 'r') as file:
+    def tuneCompareFromFile(self, fileName: str, errorLabel: str = 'MAPE', sliceResult: bool = False):
+        with open(f"prediction/randomForest/tuneResults/{fileName}", 'r') as file:
             data = [stringRowToTuneResult(row) for row in file.readlines()]
-        self.tuneCompare(data, errorLabel)
+        self.tuneCompare(data, errorLabel, sliceResult)
