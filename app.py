@@ -31,6 +31,7 @@ def main():
     mapeRes = mape(data.testing[Energy], prediction)
     mseRes = mse(data.testing[Energy], prediction)
     print(mapeRes, mseRes)
+    print(time)
 
 
 if __name__ == '__main__':
