@@ -134,3 +134,4 @@ dmypy.json
 # Project saved results
 prediction/arima/tuneResults/
 prediction/randomForest/tuneResults/
+prediction/neuralNetwork/tuneResults/

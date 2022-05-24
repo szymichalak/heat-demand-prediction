@@ -10,7 +10,9 @@ from data.split import DataSplit
 from data.splitter import DataSplitter
 from plotter.plotter import Plotter
 from prediction.arima.arimaPrediction import ArimaPrediction
-from prediction.randomForest.tuner import Tuner
+from prediction.neuralNetwork.neuralNetworkPrediction import NeuralNetworkPrediction
+from prediction.neuralNetwork.tuner import Tuner
+# from prediction.randomForest.tuner import Tuner
 from prediction.randomForest.randomForestPrediction import RandomForestPrediction
 
 pd.options.mode.chained_assignment = None
@@ -24,17 +26,9 @@ def main():
     data: DataSplit = DataSplitter(deviceData).getSplittedData()
     plotter = Plotter(deviceData)
 
-    rf = RandomForestPrediction(data, 10, None, 2, 5)
-    prediction, time = rf.calculateForecast()
-    plotter.compare(data.testing, prediction)
-    plotter.compare(data.testing, prediction, 720)
-    mapeRes = mape(data.testing[Energy], prediction)
-    mseRes = mse(data.testing[Energy], prediction)
-    print(mapeRes, mseRes)
-
-    # tuner = Tuner(data)
-    # tuneRes = tuner.tuneParameters([10, 50, 100, 200], [None, 1, 2], [2, 5], [1, 2, 5])
-    # plotter.tuneCompare(tuneRes)
+    tuner = Tuner(data)
+    tuneRes = tuner.tuneParameters([2, 4, 8, 12, 24], [2, 6, 8, 12], ['relu', 'tanh'], [5, 10], [16, 32, 64])
+    plotter.tuneCompare(tuneRes)
     # plotter.tuneCompare(tuneRes, sliceResult=True)
 
 
