@@ -20,3 +20,18 @@ class TuneResult:
 def stringRowToTuneResult(row: str) -> TuneResult:
     rowArray = row.replace('\n', '').replace(' ', '').replace('(', '').replace(')', '').replace('s', '').split(';')
     return TuneResult(float(rowArray[0]), float(rowArray[1]), tuple([int(o) for o in rowArray[2].split(',')]))
+
+
+def stringRowToTuneResultNN(row: str) -> TuneResult:
+    rowArray = row.replace('\n', '').replace(' ', '').replace('(', '')\
+        .replace(')', '')\
+        .replace('s', '')\
+        .replace("'relu'", "relu")\
+        .replace("'tanh'", "tanh")\
+        .split(';')
+    split = rowArray[2].split(',')
+    return TuneResult(
+        float(rowArray[0]),
+        float(rowArray[1]),
+        tuple([int(split[0]), int(split[1]), split[2], int(split[3]), int(split[4])])
+    )

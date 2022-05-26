@@ -19,7 +19,7 @@ class Tuner:
         self,
         first_layers: List[int],
         second_layers: List[int],
-        activations: List[int],
+        activations: List[str],
         epochs: List[int],
         batch_sizes: List[int],
         saveResult: bool = True

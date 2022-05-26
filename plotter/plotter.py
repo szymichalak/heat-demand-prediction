@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from typing import List
 
 from customSelectors.columns import Timestamp, Temperature, Energy, Wind
-from prediction.arima.tuneResult import TuneResult, stringRowToTuneResult
+from prediction.arima.tuneResult import TuneResult, stringRowToTuneResult, stringRowToTuneResultNN
 
 
 class Plotter:
@@ -50,8 +50,8 @@ class Plotter:
 
     def tuneCompare(self, data: List[TuneResult], errorLabel: str = 'MAPE', sliceResult: bool = False):
         if sliceResult:
-            data = [row for row in data if row.error < 0.25]
-            data = [row for row in data if row.time < 0.75]
+            data = [row for row in data if row.error < 0.2]
+            data = [row for row in data if row.time < 10]
 
         plt.figure(figsize=(8, 8), dpi=300)
         plt.scatter([res.time for res in data], [res.error for res in data])
@@ -65,6 +65,6 @@ class Plotter:
         plt.show()
 
     def tuneCompareFromFile(self, fileName: str, errorLabel: str = 'MAPE', sliceResult: bool = False):
-        with open(f"prediction/randomForest/tuneResults/{fileName}", 'r') as file:
-            data = [stringRowToTuneResult(row) for row in file.readlines()]
+        with open(f"prediction/neuralNetwork/tuneResults/{fileName}", 'r') as file:
+            data = [stringRowToTuneResultNN(row) for row in file.readlines()]
         self.tuneCompare(data, errorLabel, sliceResult)
