@@ -21,15 +21,22 @@ warnings.filterwarnings('ignore')
 
 def main():
     dataReader = DataReader()
-    deviceData = dataReader.getWaterDeviceById(5005)
-    # deviceData = dataReader.getHeatingDeviceById(5006)
-    data: DataSplit = DataSplitter(deviceData).getSplittedData()
+    # deviceData = dataReader.getWaterDeviceById(5005)
+    deviceData = dataReader.getHeatingDeviceById(5006)
     plotter = Plotter(deviceData)
 
-    tuner = Tuner(data)
-    tuneRes = tuner.tuneParameters([2, 4, 8, 12, 24], [2, 6, 8, 12], ['relu', 'tanh'], [5, 10], [16, 32, 64])
-    plotter.tuneCompare(tuneRes)
-    # plotter.tuneCompare(tuneRes, sliceResult=True)
+    aggHours = [24, 12, 6, 4, 2, 1]
+    for agg in aggHours:
+        data: DataSplit = DataSplitter(deviceData).setAggregateHour(agg).getSplittedData(True)
+        arima = ArimaPrediction(data, seasonalOrder=(0, 0, 1, 365 * 24 / agg))
+        arimaPrediction, time = arima.calculateForecast()
+        plotter.compare(data.testing, arimaPrediction)
+        print('#####################')
+        print('agg', agg)
+        print('time', time)
+        print('mape', mape(data.testing[Energy], arimaPrediction))
+        print('mse', mse(data.testing[Energy], arimaPrediction))
+        print('#####################')
 
 
 if __name__ == '__main__':
