@@ -15,7 +15,7 @@ class DataSplitter:
         
         self.__trainingData = self.__sliceTimeSeries(self.__startTraining, self.__endTraining)
         self.__testingData = self.__sliceTimeSeries(self.__startTesting, self.__endTesting)
-        # self.__handleZeroEnergyConsumption()
+        self.__handleZeroEnergyConsumption()
         self.__verifySplit()
 
     def getTrainingData(self) -> pd.DataFrame:
