@@ -1,5 +1,3 @@
-import copy
-
 import pandas as pd
 
 from customSelectors.columns import Energy, Timestamp, Temperature, Wind, Hum, Clouds, DayLength, TypeOfDay, Season
@@ -13,7 +11,7 @@ class DataSplitter:
         self.__startTraining = '2016-01-01 00:00:00'
         self.__endTraining = '2017-12-31 23:00:00'
         self.__startTesting = '2018-10-01 00:00:00'
-        self.__endTesting = '2019-02-25 23:00:00'
+        self.__endTesting = '2019-02-28 23:00:00'
 
         self.__aggregateHours: int = 24
         
@@ -32,8 +30,9 @@ class DataSplitter:
         return DataSplit((self.getTrainingData(aggregateByDay), self.getTestingData(aggregateByDay)))
 
     def setAggregateHour(self, value: int):
-        self.__aggregateHours = value
-        return self
+        if [24, 12, 8, 6, 4, 3, 2, 1].index(value):
+            self.__aggregateHours = value
+            return self
 
     def __sliceTimeSeries(self, startTime: str, endTime: str) -> pd.DataFrame:
         startIndex = self.__data.index.get_loc(startTime)

@@ -4,10 +4,12 @@ import pandas as pd
 from typing import Tuple
 
 from keras.models import Sequential
-from keras.layers import Dense, LSTM, Dropout, Activation
+from keras.layers import Dense
 
 from customSelectors.columns import Energy, exog
 from data.split import DataSplit
+from utils.const import HORIZON
+from utils.predictions import Predictions
 
 
 class NeuralNetworkPrediction:
@@ -41,9 +43,17 @@ class NeuralNetworkPrediction:
         end = time.time()
         self.__fittingTime = round(end - start, 2)
 
-    def __getForecast(self) -> pd.DataFrame:
-        return self.__regressor.predict(self.__testingData[exog])
+    def __getForecast(self, iteration: int) -> pd.DataFrame:
+        return self.__regressor.predict(self.__testingData[exog].iloc[iteration:iteration+HORIZON])
 
-    def calculateForecast(self) -> Tuple[pd.DataFrame, float]:
+    def calculateForecast(self) -> Tuple[Predictions, float]:
         self.__fitModel()
-        return self.__getForecast(), self.__fittingTime
+        result = pd.DataFrame(columns=[h * pd.Timedelta(1, unit='h') for h in range(1, HORIZON+1)], index=self.__testingData.index[:-HORIZON])
+
+        start = time.time()
+        for i in range(len(self.__testingData.index) - HORIZON):
+            print(i / (len(self.__testingData.index) - HORIZON))
+            prediction = self.__getForecast(i)
+            result.at[self.__testingData.index.values[i]] = [value[0] for value in prediction.tolist()]
+        end = time.time()
+        return Predictions(result), self.__fittingTime + round(end - start, 2)

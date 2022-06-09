@@ -37,8 +37,8 @@ class Plotter:
 
     def compare(self, actualData: pd.DataFrame, forecast: pd.DataFrame, records: int = None, offset: int = 0):
         if records is not None:
-            actualData = actualData[offset:offset+records+1]
-            forecast = forecast[offset:offset+records+1]
+            actualData = actualData[offset:offset+records]
+            forecast = forecast[offset:offset+records]
         plt.figure(figsize=(12, 4), dpi=300)
         plt.plot(actualData[Timestamp], actualData[Energy], label="Actual")
         plt.plot(actualData[Timestamp], forecast, label="Forecast")

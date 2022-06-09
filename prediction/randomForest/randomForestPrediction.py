@@ -6,6 +6,8 @@ from sklearn.ensemble import RandomForestRegressor
 
 from customSelectors.columns import Energy, exog
 from data.split import DataSplit
+from utils.const import HORIZON
+from utils.predictions import Predictions
 
 
 class RandomForestPrediction:
@@ -44,8 +46,16 @@ class RandomForestPrediction:
         self.__fittingTime = round(end - start, 2)
         return modelFitted
 
-    def __getForecast(self, model: RandomForestRegressor) -> pd.DataFrame:
-        return model.predict(self.__testingData[exog])
+    def __getForecast(self, model: RandomForestRegressor, iteration: int) -> pd.DataFrame:
+        return model.predict(self.__testingData[exog].iloc[iteration:iteration+HORIZON])
 
-    def calculateForecast(self) -> Tuple[pd.DataFrame, float]:
-        return self.__getForecast(self.__fitModel()), self.__fittingTime
+    def calculateForecast(self) -> Tuple[Predictions, float]:
+        model = self.__fitModel()
+        result = pd.DataFrame(columns=[h * pd.Timedelta(1, unit='h') for h in range(1, HORIZON+1)], index=self.__testingData.index[:-HORIZON])
+
+        start = time.time()
+        for i in range(len(self.__testingData.index) - HORIZON):
+            prediction = self.__getForecast(model, i)
+            result.at[self.__testingData.index.values[i]] = prediction
+        end = time.time()
+        return Predictions(result), self.__fittingTime + round(end - start, 2)
