@@ -48,9 +48,9 @@ class DataSplitter:
 
     def __verifySplit(self):
         if len(self.__trainingData.index) < 5000:
-            raise ValueError('Too few training observations')
+            raise ValueError('Not enough training observations')
         if len(self.__testingData.index) < 1500:
-            raise ValueError('To few testing observations')
+            raise ValueError('Not enough testing observations')
 
     def __getAggregateDataByDay(self, data: pd.DataFrame) -> pd.DataFrame:
         data['Timestamp'] = data[Timestamp].apply(self.__groupBy)

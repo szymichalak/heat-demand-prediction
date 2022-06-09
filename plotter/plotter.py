@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from typing import List
 
 from customSelectors.columns import Timestamp, Temperature, Energy, Wind
-from prediction.arima.tuneResult import TuneResult, stringRowToTuneResult, stringRowToTuneResultNN
+from tuner.tuneResult import TuneResult
 
 
 class Plotter:
@@ -48,10 +48,11 @@ class Plotter:
         plt.title(self.__title)
         plt.show()
 
-    def tuneCompare(self, data: List[TuneResult], errorLabel: str = 'MAPE', sliceResult: bool = False):
-        if sliceResult:
-            data = [row for row in data if row.error < 0.2]
-            data = [row for row in data if row.time < 10]
+    def tuneCompare(self, data: List[TuneResult], errorLabel: str = 'MSE', sliceResultError: float = None, sliceResultTime: float = None):
+        if sliceResultError:
+            data = [row for row in data if row.error < sliceResultError]
+        if sliceResultTime:
+            data = [row for row in data if row.time < sliceResultTime]
 
         plt.figure(figsize=(8, 8), dpi=300)
         plt.scatter([res.time for res in data], [res.error for res in data])
@@ -59,12 +60,12 @@ class Plotter:
         plt.ylabel(errorLabel)
 
         for res in data:
-            plt.annotate(res.order, (res.time, res.error), fontsize=6.5)
+            plt.annotate(res.parameters, (res.time, res.error), fontsize=6.5)
 
         plt.title(self.__title)
         plt.show()
 
-    def tuneCompareFromFile(self, fileName: str, errorLabel: str = 'MAPE', sliceResult: bool = False):
-        with open(f"prediction/neuralNetwork/tuneResults/{fileName}", 'r') as file:
-            data = [stringRowToTuneResultNN(row) for row in file.readlines()]
-        self.tuneCompare(data, errorLabel, sliceResult)
+    def tuneCompareFromFile(self, fileName: str, errorLabel: str = 'MSE', sliceResultError: float = None, sliceResultTime: float = None):
+        with open(f"tuner/tuneResults/{fileName}", 'r') as file:
+            data: List[TuneResult] = [TuneResult(row) for row in file.readlines()]
+        self.tuneCompare(data, errorLabel, sliceResultError, sliceResultTime)

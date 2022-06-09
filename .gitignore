@@ -132,6 +132,4 @@ dmypy.json
 .pyre/
 
 # Project saved results
-prediction/arima/tuneResults/
-prediction/randomForest/tuneResults/
-prediction/neuralNetwork/tuneResults/
+tuner/tuneResults/

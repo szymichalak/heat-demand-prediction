@@ -1,3 +1,5 @@
+from typing import List
+
 import pandas as pd
 import warnings
 
@@ -8,6 +10,8 @@ from plotter.plotter import Plotter
 from prediction.arima.arimaPrediction import ArimaPrediction
 from prediction.neuralNetwork.neuralNetworkPrediction import NeuralNetworkPrediction
 from prediction.randomForest.randomForestPrediction import RandomForestPrediction
+from tuner.tuneResult import TuneResult
+from tuner.tuner import Tuner
 from utils.groundTruth import GroundTruth
 from utils.measures import computeMSEWithHorizon, computeMAPEWithHorizon
 
@@ -19,18 +23,19 @@ def main():
     dataReader = DataReader()
     # deviceData = dataReader.getWaterDeviceById(5005)
     deviceData = dataReader.getHeatingDeviceById(5006)
-    plotter = Plotter(deviceData)
-
     data: DataSplit = DataSplitter(deviceData).getSplittedData()
-    arima = ArimaPrediction(data, order=(0, 0, 1))
-    arimaPrediction, time = arima.calculateForecast()
-    gt = GroundTruth(data.testing)
-    shift = 71
-    plotter.compare(gt.shift(shift), arimaPrediction.shift(shift))
-    plotter.compare(gt.shift(shift), arimaPrediction.shift(shift), 250)
-    print('time', time)
-    print('mape', computeMAPEWithHorizon(gt, arimaPrediction))
-    print('mse', computeMSEWithHorizon(gt, arimaPrediction))
+
+    plotter = Plotter(deviceData)
+    tuner = Tuner(data)
+
+    tuneResult: List[TuneResult] = [TuneResult(row) for row in tuner.tuneArimaParameters([0, 1, 5], [0, 1, 2], [0, 1, 5])]
+    plotter.tuneCompare(tuneResult)
+
+    tuneResult: List[TuneResult] = [TuneResult(row) for row in tuner.tuneRfParameters([10, 50], [None, 1, 2], [2, 5], [1, 2, 5])]
+    plotter.tuneCompare(tuneResult)
+
+    tuneResult: List[TuneResult] = [TuneResult(row) for row in tuner.tuneNnParameters([2, 4, 8], [2, 4, 8], ['relu', 'tanh'], [5, 10], [32, 64])]
+    plotter.tuneCompare(tuneResult)
 
 
 if __name__ == '__main__':
