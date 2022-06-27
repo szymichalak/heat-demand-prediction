@@ -1,14 +1,17 @@
-from tabulate import tabulate
-from sklearn.metrics import mean_absolute_percentage_error as mape
-from sklearn.metrics import mean_squared_error as mse
+import warnings
 
-from customSelectors.columns import Energy
+from tabulate import tabulate
+
 from data.reader import DataReader
 from data.split import DataSplit
 from data.splitter import DataSplitter
 from prediction.arima.arimaPrediction import ArimaPrediction
 from prediction.neuralNetwork.neuralNetworkPrediction import NeuralNetworkPrediction
 from prediction.randomForest.randomForestPrediction import RandomForestPrediction
+from utils.groundTruth import GroundTruth
+from utils.measures import computeMAPEWithHorizon, computeMSEWithHorizon
+
+warnings.filterwarnings('ignore')
 
 
 def generateRows():
@@ -18,25 +21,26 @@ def generateRows():
         deviceData = dataReader.getHeatingDeviceById(deviceId)
         try:
             data: DataSplit = DataSplitter(deviceData).getSplittedData()
+            gt = GroundTruth(data.testing)
         except ValueError:
             continue
 
         arima = ArimaPrediction(data, order=(0, 0, 1))  # both
         arimaPrediction, arimaTime = arima.calculateForecast()
-        arimaMAPE = mape(data.testing[Energy], arimaPrediction)
-        arimaMSE = mse(data.testing[Energy], arimaPrediction)
+        arimaMAPE = computeMAPEWithHorizon(gt, arimaPrediction)
+        arimaMSE = computeMSEWithHorizon(gt, arimaPrediction)
 
-        rf = RandomForestPrediction(data, 50, None, 5, 5)  # heating
+        rf = RandomForestPrediction(data, 50, None, 2, 5)  # heating
         # rf = RandomForestPrediction(data, 10, None, 2, 5)  # water
         rfPrediction, rfTime = rf.calculateForecast()
-        rfMAPE = mape(data.testing[Energy], rfPrediction)
-        rfMSE = mse(data.testing[Energy], rfPrediction)
+        rfMAPE = computeMAPEWithHorizon(gt, rfPrediction)
+        rfMSE = computeMSEWithHorizon(gt, rfPrediction)
 
-        nn = NeuralNetworkPrediction(data, 2, 6, 'relu', 5, 32)  # heating
+        nn = NeuralNetworkPrediction(data, 8, 2, 'relu', 10, 64)  # heating
         # nn = NeuralNetworkPrediction(data, 4, 2, 'relu', 5, 64)  # water
         nnPrediction, nnTime = nn.calculateForecast()
-        nnMAPE = mape(data.testing[Energy], nnPrediction)
-        nnMSE = mse(data.testing[Energy], nnPrediction)
+        nnMAPE = computeMAPEWithHorizon(gt, nnPrediction)
+        nnMSE = computeMSEWithHorizon(gt, nnPrediction)
 
         rows.append(
             [

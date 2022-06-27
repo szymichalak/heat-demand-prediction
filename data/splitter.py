@@ -20,17 +20,17 @@ class DataSplitter:
         self.__handleZeroEnergyConsumption()
         self.__verifySplit()
 
-    def getTrainingData(self, aggregateByDay: int = False) -> pd.DataFrame:
-        return self.__trainingData if not aggregateByDay else self.__getAggregateDataByDay(self.__trainingData)
+    def getTrainingData(self, aggregate: int = False) -> pd.DataFrame:
+        return self.__trainingData if not aggregate else self.__getAggregateDataByDay(self.__trainingData)
 
-    def getTestingData(self, aggregateByDay: int = False) -> pd.DataFrame:
-        return self.__testingData if not aggregateByDay else self.__getAggregateDataByDay(self.__testingData)
+    def getTestingData(self, aggregate: int = False) -> pd.DataFrame:
+        return self.__testingData if not aggregate else self.__getAggregateDataByDay(self.__testingData)
 
-    def getSplittedData(self, aggregateByDay: int = False) -> DataSplit:
-        return DataSplit((self.getTrainingData(aggregateByDay), self.getTestingData(aggregateByDay)))
+    def getSplittedData(self, aggregate: int = False) -> DataSplit:
+        return DataSplit((self.getTrainingData(aggregate), self.getTestingData(aggregate)))
 
-    def setAggregateHour(self, value: int):
-        if [24, 12, 8, 6, 4, 3, 2, 1].index(value):
+    def setAggregateHours(self, value: int):
+        if [24, 12, 8, 6, 4, 3, 2, 1].index(value) >= 0:
             self.__aggregateHours = value
             return self
 

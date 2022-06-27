@@ -14,24 +14,24 @@ class Plotter:
     def generateTemperaturePlot(self):
         plt.figure(figsize=(12, 4), dpi=300)
         plt.plot(self.__data[Timestamp], self.__data[Temperature])
-        plt.xlabel("Time")
-        plt.ylabel("Temperature [°C]")
+        plt.xlabel("Czas")
+        plt.ylabel("Temperatura [°C]")
         plt.title(self.__title)
         plt.show()
 
     def generateWindPlot(self):
         plt.figure(figsize=(12, 4), dpi=300)
         plt.plot(self.__data[Timestamp], self.__data[Wind])
-        plt.xlabel("Time")
-        plt.ylabel("Wind [m/s]")
+        plt.xlabel("Czas")
+        plt.ylabel("Wiatr [m/s]")
         plt.title(self.__title)
         plt.show()
 
     def generateEnergyConsumptionPlot(self):
         plt.figure(figsize=(12, 4), dpi=300)
         plt.plot(self.__data[Timestamp], self.__data[Energy])
-        plt.xlabel("Time")
-        plt.ylabel("Energy [kWh]")
+        plt.xlabel("Czas")
+        plt.ylabel("Energia [kWh]")
         plt.title(self.__title)
         plt.show()
 
@@ -40,11 +40,11 @@ class Plotter:
             actualData = actualData[offset:offset+records]
             forecast = forecast[offset:offset+records]
         plt.figure(figsize=(12, 4), dpi=300)
-        plt.plot(actualData[Timestamp], actualData[Energy], label="Actual")
-        plt.plot(actualData[Timestamp], forecast, label="Forecast")
+        plt.plot(actualData[Timestamp], actualData[Energy], label="Aktualna")
+        plt.plot(actualData[Timestamp], forecast, label="Predykcja")
         plt.legend(loc="upper left")
-        plt.xlabel("Time")
-        plt.ylabel("Energy [kWh]")
+        plt.xlabel("Czas")
+        plt.ylabel("Energia [kWh]")
         plt.title(self.__title)
         plt.show()
 
@@ -56,7 +56,7 @@ class Plotter:
 
         plt.figure(figsize=(8, 8), dpi=300)
         plt.scatter([res.time for res in data], [res.error for res in data])
-        plt.xlabel("Time [s]")
+        plt.xlabel("Czas [s]")
         plt.ylabel(errorLabel)
 
         for res in data:

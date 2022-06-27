@@ -24,18 +24,12 @@ def main():
     # deviceData = dataReader.getWaterDeviceById(5005)
     deviceData = dataReader.getHeatingDeviceById(5006)
     data: DataSplit = DataSplitter(deviceData).getSplittedData()
-
+    gt = GroundTruth(data.testing)
     plotter = Plotter(deviceData)
-    tuner = Tuner(data)
 
-    tuneResult: List[TuneResult] = [TuneResult(row) for row in tuner.tuneArimaParameters([0, 1, 5], [0, 1, 2], [0, 1, 5])]
-    plotter.tuneCompare(tuneResult)
-
-    tuneResult: List[TuneResult] = [TuneResult(row) for row in tuner.tuneRfParameters([10, 50], [None, 1, 2], [2, 5], [1, 2, 5])]
-    plotter.tuneCompare(tuneResult)
-
-    tuneResult: List[TuneResult] = [TuneResult(row) for row in tuner.tuneNnParameters([2, 4, 8], [2, 4, 8], ['relu', 'tanh'], [5, 10], [32, 64])]
-    plotter.tuneCompare(tuneResult)
+    model = ArimaPrediction(data, order=(0, 0, 1))
+    pred, t = model.calculateForecast()
+    plotter.compare(gt.shift(0), pred.shift(0))
 
 
 if __name__ == '__main__':

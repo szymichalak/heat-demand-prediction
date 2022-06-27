@@ -52,7 +52,6 @@ class NeuralNetworkPrediction:
 
         start = time.time()
         for i in range(len(self.__testingData.index) - HORIZON):
-            print(i / (len(self.__testingData.index) - HORIZON))
             prediction = self.__getForecast(i)
             result.at[self.__testingData.index.values[i]] = [value[0] for value in prediction.tolist()]
         end = time.time()
